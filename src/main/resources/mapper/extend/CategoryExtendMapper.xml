@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.nilaoda.apps.cms.mapper.extend.CategoryExtendMapper">
+    <resultMap id="CategoryExtendResultMap" type="top.nilaoda.apps.cms.bean.extend.CategoryExtend"
+               extends="top.nilaoda.apps.cms.mapper.CategoryMapper.BaseResultMap">
+        <!-- 通过parentId查询 -->
+        <association property="parent" column="parent_id"
+                     select="top.nilaoda.apps.cms.mapper.CategoryMapper.selectByPrimaryKey"/>
+    </resultMap>
+
+    <select id="findAllWithParent" resultMap="CategoryExtendResultMap">
+      select *
+      from cms_category
+    </select>
+
+    <select id="pageQueryWithParent" resultMap="CategoryExtendResultMap">
+      select *
+      from cms_category
+      limit ${(page-1)*pageSize},${pageSize}
+    </select>
+
+    <select id="queryTotalCount" resultType="long">
+        select count(*) from cms_category
+    </select>
+</mapper>

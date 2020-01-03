@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.nilaoda.apps.cms.mapper.extend.ArticleExtendMapper">
+    <resultMap id="ArticleExtendResultMap" type="top.nilaoda.apps.cms.bean.extend.ArticleExtend"
+               extends="top.nilaoda.apps.cms.mapper.ArticleMapper.BaseResultMap">
+        <association property="author" column="author_id"
+                     select="top.nilaoda.apps.cms.mapper.UserMapper.selectByPrimaryKey"/>
+      <association property="category" javaType="top.nilaoda.apps.cms.bean.Category">
+        <id column="c_id" property="id"/>
+        <result column="c_name" property="name"/>
+        <result column="c_description" property="description"/>
+        <result column="c_no" property="no"/>
+      </association>
+      <association property="author" javaType="top.nilaoda.apps.cms.bean.User">
+        <id column="u_id" property="id"/>
+        <result column="u_username" property="username"/>
+        <result column="u_telephone" property="telephone"/>
+        <result column="u_realname" property="realname"/>
+        <result column="u_gender" property="gender"/>
+        <result column="u_birth" property="birth"/>
+        <result column="u_register_time" property="registerTime"/>
+        <result column="u_status" property="status"/>
+        <result column="u_user_face" property="userFace"/>
+      </association>
+    </resultMap>
+
+    <select id="queryTotalCount" resultType="long">
+        select count(*) from cms_article
+    </select>
+
+    <select id="findAllWithAuthorAndCategory" resultMap="ArticleExtendResultMap">
+      select a.*,
+      c.name as c_name, c.id as c_id, c.description as c_description, c.no as c_no,
+      u.username as u_username, u.id as u_id, u.telephone as u_telephone, u.realname as u_realname,
+      u.gender as u_gender, u.birth as u_birth, u.register_time as u_register_time, u.status as u_status,
+      u.user_face as u_user_face
+      from cms_article a left join cms_category c
+      on a.category_id = c.id
+      left join base_user u
+      on a.author_id = u.id
+    </select>
+
+    <select id="findByIdWithAuthorAndCategory" resultMap="ArticleExtendResultMap"
+            parameterType="top.nilaoda.apps.cms.bean.extend.ArticleExtend">
+      select a.*,
+      c.name as c_name, c.id as c_id, c.description as c_description, c.no as c_no,
+      u.username as u_username, u.id as u_id, u.telephone as u_telephone, u.realname as u_realname,
+      u.gender as u_gender, u.birth as u_birth, u.register_time as u_register_time, u.status as u_status,
+      u.user_face as u_user_face
+      from cms_article a left join cms_category c
+      on a.category_id = c.id
+      left join base_user u
+      on a.author_id = u.id
+      where a.id = #{id}
+    </select>
+
+  <select id="findByTitleWithAuthorAndCategory" resultMap="ArticleExtendResultMap"
+          parameterType="String">
+      select a.*,
+      c.name as c_name, c.id as c_id, c.description as c_description, c.no as c_no,
+      u.username as u_username, u.id as u_id, u.telephone as u_telephone, u.realname as u_realname,
+      u.gender as u_gender, u.birth as u_birth, u.register_time as u_register_time, u.status as u_status,
+      u.user_face as u_user_face
+      from cms_article a left join cms_category c
+      on a.category_id = c.id
+      left join base_user u
+      on a.author_id = u.id
+      where a.title like #{title}
+    </select>
+
+    <select id="pageQueryWithAuthorAndCategory" resultMap="ArticleExtendResultMap">
+      select a.*,
+      c.name as c_name, c.id as c_id, c.description as c_description, c.no as c_no,
+      u.username as u_username, u.id as u_id, u.telephone as u_telephone, u.realname as u_realname,
+      u.gender as u_gender, u.birth as u_birth, u.register_time as u_register_time, u.status as u_status,
+      u.user_face as u_user_face
+      from cms_article a left join cms_category c
+      on a.category_id = c.id
+      left join base_user u
+      on a.author_id = u.id
+      order by publish_time desc
+      limit ${(page-1)*pageSize},${pageSize}
+    </select>
+</mapper>
